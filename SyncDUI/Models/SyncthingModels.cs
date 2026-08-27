@@ -86,6 +86,7 @@ public sealed class SyncthingConnectionsResponse
 public sealed class SyncthingConnectionEntry
 {
     public string DeviceId { get; set; } = string.Empty;
+    public string Name { get; set; } = string.Empty;
     public string Address { get; set; } = string.Empty;
     public bool Connected { get; set; }
     public string ClientVersion { get; set; } = string.Empty;
@@ -93,6 +94,7 @@ public sealed class SyncthingConnectionEntry
     public long InBytesTotal { get; set; }
     public long OutBytesTotal { get; set; }
 
+    public string PrettyName => string.IsNullOrWhiteSpace(Name) ? DeviceId : Name;
     public string StatusLabel => Connected ? "Connected" : "Disconnected";
     public string Throughput => $"{FormatBytes(InBytesTotal)} ↓ / {FormatBytes(OutBytesTotal)} ↑";
 
@@ -112,4 +114,17 @@ public sealed class SyncthingConnectionEntry
 
         return $"{value.ToString("0.##", CultureInfo.InvariantCulture)} {units[index]}";
     }
+}
+
+public sealed class SyncthingFolderEntry
+{
+    public string Id { get; set; } = string.Empty;
+    public string Name { get; set; } = string.Empty;
+    public string Path { get; set; } = string.Empty;
+    public string Type { get; set; } = string.Empty;
+    public bool ReadOnly { get; set; }
+    public string Devices { get; set; } = string.Empty;
+    public string StatusSummary { get; set; } = "No status loaded";
+    public string PrettyName => string.IsNullOrWhiteSpace(Name) ? Id : Name;
+    public string FolderSummary => $"{PrettyName} · {Path}";
 }

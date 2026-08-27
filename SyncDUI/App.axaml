@@ -3,6 +3,9 @@
              x:Class="SyncDUI.App"
              xmlns:local="using:SyncDUI"
              RequestedThemeVariant="Light">
+    <Application.Styles>
+        <FluentTheme />
+    </Application.Styles>
 
     <Application.DataTemplates>
         <local:ViewLocator />
