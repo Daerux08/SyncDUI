@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace SyncDUI.Models;
@@ -27,6 +28,32 @@ public sealed class SyncthingStatusResponse
     [JsonPropertyName("discoveryEnabled")] public bool DiscoveryEnabled { get; set; }
     [JsonPropertyName("discoveryMethods")] public int DiscoveryMethods { get; set; }
     [JsonPropertyName("themes")] public List<string> Themes { get; set; } = new();
+}
+
+public sealed class SyncthingSystemPathsResponse
+{
+    [JsonPropertyName("config")] public string Config { get; set; } = string.Empty;
+    [JsonPropertyName("home")] public string Home { get; set; } = string.Empty;
+    [JsonPropertyName("index")] public string Index { get; set; } = string.Empty;
+    [JsonPropertyName("keys")] public string Keys { get; set; } = string.Empty;
+    [JsonPropertyName("certFile")] public string CertFile { get; set; } = string.Empty;
+    [JsonPropertyName("keyFile")] public string KeyFile { get; set; } = string.Empty;
+}
+
+public sealed class SyncthingHealthResponse
+{
+    [JsonPropertyName("error")] public string Error { get; set; } = string.Empty;
+    [JsonPropertyName("service")] public string Service { get; set; } = string.Empty;
+    [JsonPropertyName("version")] public string Version { get; set; } = string.Empty;
+}
+
+public sealed class SyncthingEvent
+{
+    [JsonPropertyName("id")] public long Id { get; set; }
+    [JsonPropertyName("globalID")] public long GlobalId { get; set; }
+    [JsonPropertyName("time")] public string Time { get; set; } = string.Empty;
+    [JsonPropertyName("type")] public string Type { get; set; } = string.Empty;
+    [JsonPropertyName("data")] public JsonElement Data { get; set; }
 }
 
 public sealed class SyncthingConnectionTotals

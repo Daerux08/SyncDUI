@@ -3,11 +3,11 @@
         xmlns:vm="using:SyncDUI.ViewModels"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" d:DesignWidth="960" d:DesignHeight="640"
+        mc:Ignorable="d" d:DesignWidth="980" d:DesignHeight="720"
         x:Class="SyncDUI.Views.MainWindow"
         x:DataType="vm:MainViewModel"
         Title="SyncDUI"
-        Width="980" Height="680">
+        Width="1100" Height="760">
 
     <Design.DataContext>
         <vm:MainViewModel />
@@ -31,20 +31,22 @@
             </StackPanel>
         </Border>
 
-        <Grid Grid.Row="1" Margin="0,20,0,0" ColumnDefinitions="1.1*,1.4*" ColumnSpacing="20">
+        <Grid Grid.Row="1" Margin="0,20,0,0" ColumnDefinitions="1.2*,1.8*" ColumnSpacing="20">
             <StackPanel Spacing="16">
                 <Border Padding="16" CornerRadius="12" Background="#FFFFFF" BorderBrush="#D9D9D9" BorderThickness="1">
                     <StackPanel Spacing="8">
                         <TextBlock Text="System" FontSize="18" FontWeight="SemiBold" Foreground="#111111" />
                         <TextBlock Text="{Binding VersionSummary}" Foreground="#111111" />
                         <TextBlock Text="{Binding SystemSummary}" TextWrapping="Wrap" Foreground="#111111" />
+                        <TextBlock Text="{Binding HealthSummary}" Foreground="#111111" />
+                        <TextBlock Text="{Binding PathsSummary}" TextWrapping="Wrap" Foreground="#111111" />
                     </StackPanel>
                 </Border>
 
                 <Border Padding="16" CornerRadius="12" Background="#FFFFFF" BorderBrush="#D9D9D9" BorderThickness="1">
                     <StackPanel Spacing="8">
                         <TextBlock Text="Connected devices" FontSize="18" FontWeight="SemiBold" Foreground="#111111" />
-                        <ListBox ItemsSource="{Binding Devices}" SelectedItem="{Binding SelectedDevice}" Height="300" Background="#FFFFFF">
+                        <ListBox ItemsSource="{Binding Devices}" SelectedItem="{Binding SelectedDevice}" Height="260" Background="#FFFFFF">
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
                                     <Border Padding="8" CornerRadius="8" Background="#F7F7F7" BorderBrush="#E0E0E0" BorderThickness="1">
@@ -60,19 +62,54 @@
                         </ListBox>
                     </StackPanel>
                 </Border>
+
+                <Border Padding="16" CornerRadius="12" Background="#FFFFFF" BorderBrush="#D9D9D9" BorderThickness="1">
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="Recent events" FontSize="18" FontWeight="SemiBold" Foreground="#111111" />
+                        <ListBox ItemsSource="{Binding EventLog}" Height="180" Background="#FFFFFF">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding}" TextWrapping="Wrap" Foreground="#111111" />
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </StackPanel>
+                </Border>
             </StackPanel>
 
-            <Border Grid.Column="1" Padding="16" CornerRadius="12" Background="#FFFFFF" BorderBrush="#D9D9D9" BorderThickness="1">
-                <StackPanel Spacing="12">
-                    <TextBlock Text="Selected device" FontSize="18" FontWeight="SemiBold" Foreground="#111111" />
+            <StackPanel Grid.Column="1" Spacing="16">
+                <Border Padding="16" CornerRadius="12" Background="#FFFFFF" BorderBrush="#D9D9D9" BorderThickness="1">
+                    <StackPanel Spacing="12">
+                        <TextBlock Text="Selected device" FontSize="18" FontWeight="SemiBold" Foreground="#111111" />
+                        <TextBlock Text="{Binding SelectedDevice.DeviceId, FallbackValue='No device selected'}" FontSize="20" FontWeight="SemiBold" Foreground="#111111" />
+                        <TextBlock Text="{Binding SelectedDevice.Address, FallbackValue=''}" Foreground="#111111" />
+                        <TextBlock Text="{Binding SelectedDevice.ClientVersion, FallbackValue=''}" Foreground="#111111" />
+                        <TextBlock Text="{Binding SelectedDevice.Type, FallbackValue=''}" Foreground="#111111" />
+                        <TextBlock Text="{Binding SelectedDevice.Throughput, FallbackValue=''}" Foreground="#111111" />
+                    </StackPanel>
+                </Border>
 
-                    <TextBlock Text="{Binding SelectedDevice.DeviceId, FallbackValue='No device selected'}" FontSize="20" FontWeight="SemiBold" Foreground="#111111" />
-                    <TextBlock Text="{Binding SelectedDevice.Address, FallbackValue=''}" Foreground="#111111" />
-                    <TextBlock Text="{Binding SelectedDevice.ClientVersion, FallbackValue=''}" Foreground="#111111" />
-                    <TextBlock Text="{Binding SelectedDevice.Type, FallbackValue=''}" Foreground="#111111" />
-                    <TextBlock Text="{Binding SelectedDevice.Throughput, FallbackValue=''}" Foreground="#111111" />
-                </StackPanel>
-            </Border>
+                <Border Padding="16" CornerRadius="12" Background="#FFFFFF" BorderBrush="#D9D9D9" BorderThickness="1">
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="Device stats" FontSize="18" FontWeight="SemiBold" Foreground="#111111" />
+                        <TextBlock Text="{Binding DeviceStatsSummary}" TextWrapping="Wrap" Foreground="#111111" />
+                    </StackPanel>
+                </Border>
+
+                <Border Padding="16" CornerRadius="12" Background="#FFFFFF" BorderBrush="#D9D9D9" BorderThickness="1">
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="Folder stats" FontSize="18" FontWeight="SemiBold" Foreground="#111111" />
+                        <TextBlock Text="{Binding FolderStatsSummary}" TextWrapping="Wrap" Foreground="#111111" />
+                    </StackPanel>
+                </Border>
+
+                <Border Padding="16" CornerRadius="12" Background="#FFFFFF" BorderBrush="#D9D9D9" BorderThickness="1">
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="Config payload" FontSize="18" FontWeight="SemiBold" Foreground="#111111" />
+                        <TextBlock Text="{Binding ConfigSummary}" TextWrapping="Wrap" Foreground="#111111" />
+                    </StackPanel>
+                </Border>
+            </StackPanel>
         </Grid>
     </Grid>
 </Window>

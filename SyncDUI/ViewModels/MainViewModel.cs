@@ -1,7 +1,9 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -29,6 +31,24 @@ public partial class MainViewModel : ViewModelBase
 
     [ObservableProperty]
     private string systemSummary = "Awaiting connection";
+
+    [ObservableProperty]
+    private string healthSummary = "Not checked";
+
+    [ObservableProperty]
+    private string pathsSummary = "Not checked";
+
+    [ObservableProperty]
+    private string deviceStatsSummary = "No device statistics loaded";
+
+    [ObservableProperty]
+    private string folderStatsSummary = "No folder statistics loaded";
+
+    [ObservableProperty]
+    private string configSummary = "No config loaded";
+
+    [ObservableProperty]
+    private ObservableCollection<string> eventLog = new();
 
     [ObservableProperty]
     private ObservableCollection<SyncthingConnectionEntry> devices = new();
@@ -168,6 +188,12 @@ public partial class MainViewModel : ViewModelBase
             var version = await _client.GetSystemVersionAsync();
             var status = await _client.GetSystemStatusAsync();
             var connections = await _client.GetSystemConnectionsAsync();
+            var paths = await _client.GetSystemPathsAsync();
+            var health = await _client.GetNoAuthHealthAsync();
+            var deviceStats = await _client.GetStatsDeviceAsync();
+            var folderStats = await _client.GetStatsFolderAsync();
+            var events = await _client.GetEventsAsync(since: 0, timeout: 1, events: "DeviceConnected,FolderCompletion,ItemFinished");
+            var config = await _client.GetConfigAsync();
 
             if (version is not null)
             {
@@ -179,6 +205,40 @@ public partial class MainViewModel : ViewModelBase
                 var uptime = TimeSpan.FromSeconds(status.Uptime);
                 SystemSummary = $"Uptime {uptime:c} · {status.Goroutines} goroutines · {status.MyId}";
                 ConnectionStatus = "Connected";
+            }
+
+            HealthSummary = health is not null
+                ? string.IsNullOrWhiteSpace(health.Error) ? "Healthy" : $"Health error: {health.Error}"
+                : "Unavailable";
+
+            PathsSummary = paths is not null
+                ? $"Config: {paths.Config} · Home: {paths.Home}"
+                : "Unavailable";
+
+            DeviceStatsSummary = deviceStats is null || deviceStats.Count == 0
+                ? "No device statistics received"
+                : TruncateJson(deviceStats);
+
+            FolderStatsSummary = folderStats is null || folderStats.Count == 0
+                ? "No folder statistics received"
+                : TruncateJson(folderStats);
+
+            ConfigSummary = config is null ? "No config loaded" : TruncateJson(config.Value);
+
+            EventLog.Clear();
+            if (events is not null)
+            {
+                foreach (var item in events.Take(10))
+                {
+                    var eventType = string.IsNullOrWhiteSpace(item.Type) ? "event" : item.Type;
+                    var detail = item.Data.ValueKind == JsonValueKind.Object ? item.Data.ToString() : item.Data.ToString();
+                    EventLog.Add($"[{item.Time}] {eventType}: {Truncate(detail, 180)}");
+                }
+            }
+
+            if (EventLog.Count == 0)
+            {
+                EventLog.Add("No recent events");
             }
 
             Devices.Clear();
@@ -214,8 +274,31 @@ public partial class MainViewModel : ViewModelBase
             ConnectionStatus = $"Error: {ex.Message}";
             VersionSummary = "Not connected";
             SystemSummary = "Connection failed";
+            HealthSummary = "Unavailable";
+            PathsSummary = "Unavailable";
+            DeviceStatsSummary = "No device statistics loaded";
+            FolderStatsSummary = "No folder statistics loaded";
+            ConfigSummary = "No config loaded";
             Devices.Clear();
+            EventLog.Clear();
+            EventLog.Add($"Error: {ex.Message}");
             SelectedDevice = null;
         }
+    }
+
+    private static string TruncateJson(object value)
+    {
+        var json = JsonSerializer.Serialize(value);
+        return Truncate(json, 400);
+    }
+
+    private static string Truncate(string value, int maxLength)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return string.Empty;
+        }
+
+        return value.Length <= maxLength ? value : value.Substring(0, maxLength) + "...";
     }
 }
