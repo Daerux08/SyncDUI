@@ -79,6 +79,9 @@ public partial class MainViewModel : ViewModelBase
     private SyncthingConnectionEntry? selectedDevice;
 
     [ObservableProperty]
+    private SyncthingConnectionEntry? localDevice;
+
+    [ObservableProperty]
     private SyncthingFolderEntry? selectedFolder;
 
     public IAsyncRelayCommand RefreshCommand { get; }
@@ -260,7 +263,8 @@ public partial class MainViewModel : ViewModelBase
                 ? $"Config: {paths.Config} · Home: {paths.Home}"
                 : "Unavailable";
 
-            DeviceStatsSummary = BuildNamedStatsSummary(deviceStats, DeviceNameLookup, "device");
+            var localDeviceStats = GetStatsForDeviceId(deviceStats, status?.MyId);
+            DeviceStatsSummary = BuildNamedStatsSummary(localDeviceStats, DeviceNameLookup, "device");
             FolderStatsSummary = BuildNamedStatsSummary(folderStats, FolderNameLookup, "folder");
 
             ConfigSummary = config is null ? "No config loaded" : TruncateJson(config.Value);
@@ -309,10 +313,21 @@ public partial class MainViewModel : ViewModelBase
 
             if (Devices.Count > 0)
             {
-                SelectedDevice = Devices.First();
+                LocalDevice = status is not null
+                    ? Devices.FirstOrDefault(device => string.Equals(device.DeviceId, status.MyId, StringComparison.Ordinal))
+                    : Devices.First();
+
+                if (LocalDevice is null)
+                {
+                    LocalDevice = Devices.First();
+                }
+
+                SelectedDevice = Devices.FirstOrDefault(device => !string.Equals(device.DeviceId, status?.MyId ?? string.Empty, StringComparison.Ordinal))
+                    ?? Devices.First();
             }
             else
             {
+                LocalDevice = null;
                 SelectedDevice = null;
             }
 
@@ -431,6 +446,7 @@ public partial class MainViewModel : ViewModelBase
             CurrentMachinePrettyName = "Local machine";
             DeviceNameLookup.Clear();
             FolderNameLookup.Clear();
+            LocalDevice = null;
             Devices.Clear();
             EventLog.Clear();
             EventLog.Add($"Error: {ex.Message}");
@@ -446,10 +462,17 @@ public partial class MainViewModel : ViewModelBase
             {
                 var deviceId = GetStringProperty(deviceElement, "deviceID");
                 var name = GetStringProperty(deviceElement, "name");
-                if (!string.IsNullOrWhiteSpace(deviceId))
+                if (string.IsNullOrWhiteSpace(deviceId))
                 {
-                    DeviceNameLookup[deviceId] = string.IsNullOrWhiteSpace(name) ? deviceId : name;
+                    continue;
                 }
+
+                if (string.IsNullOrWhiteSpace(name))
+                {
+                    name = GetStringProperty(deviceElement, "displayName");
+                }
+
+                DeviceNameLookup[deviceId] = string.IsNullOrWhiteSpace(name) ? deviceId : name;
             }
         }
 
@@ -459,10 +482,17 @@ public partial class MainViewModel : ViewModelBase
             {
                 var folderId = GetStringProperty(folderElement, "id");
                 var name = GetStringProperty(folderElement, "label");
-                if (!string.IsNullOrWhiteSpace(folderId))
+                if (string.IsNullOrWhiteSpace(folderId))
                 {
-                    FolderNameLookup[folderId] = string.IsNullOrWhiteSpace(name) ? folderId : name;
+                    continue;
                 }
+
+                if (string.IsNullOrWhiteSpace(name))
+                {
+                    name = GetStringProperty(folderElement, "name");
+                }
+
+                FolderNameLookup[folderId] = string.IsNullOrWhiteSpace(name) ? folderId : name;
             }
         }
     }
@@ -518,6 +548,21 @@ public partial class MainViewModel : ViewModelBase
         }
     }
 
+    private static Dictionary<string, JsonElement>? GetStatsForDeviceId(Dictionary<string, JsonElement>? stats, string? deviceId)
+    {
+        if (stats is null || string.IsNullOrWhiteSpace(deviceId))
+        {
+            return stats;
+        }
+
+        if (!stats.TryGetValue(deviceId, out var entry))
+        {
+            return stats;
+        }
+
+        return new Dictionary<string, JsonElement> { [deviceId] = entry };
+    }
+
     private static string BuildNamedStatsSummary(Dictionary<string, JsonElement>? stats, Dictionary<string, string> displayNames, string itemType)
     {
         if (stats is null || stats.Count == 0)
@@ -533,12 +578,38 @@ public partial class MainViewModel : ViewModelBase
                 var label = TryGetPrettyNameForId(pair.Key, displayNames, pair.Key);
                 var valueText = pair.Value.ValueKind switch
                 {
-                    JsonValueKind.Object => TruncateJson(pair.Value),
+                    JsonValueKind.Object => SummarizeNamedStatsObject(pair.Value),
                     JsonValueKind.Array => TruncateJson(pair.Value),
                     _ => pair.Value.ToString()
                 };
                 return string.IsNullOrWhiteSpace(valueText) ? $"• {label}" : $"• {label}: {valueText}";
             }));
+    }
+
+    private static string SummarizeNamedStatsObject(JsonElement element)
+    {
+        if (element.ValueKind != JsonValueKind.Object)
+        {
+            return string.Empty;
+        }
+
+        var summary = new List<string>();
+        foreach (var property in element.EnumerateObject())
+        {
+            if (property.Value.ValueKind is JsonValueKind.Object or JsonValueKind.Array)
+            {
+                summary.Add($"{property.Name}: {TruncateJson(property.Value)}");
+                continue;
+            }
+
+            var value = property.Value.ToString();
+            if (!string.IsNullOrWhiteSpace(value))
+            {
+                summary.Add($"{property.Name}: {value}");
+            }
+        }
+
+        return summary.Count == 0 ? string.Empty : string.Join(" · ", summary);
     }
 
     private static string TryGetPrettyNameForId(string id, Dictionary<string, string> displayNames, string fallback)

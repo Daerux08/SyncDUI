@@ -1,0 +1,64 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:SyncDUI.ViewModels"
+             x:Class="SyncDUI.Views.FoldersTab"
+             x:DataType="vm:MainViewModel">
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+        <Grid Margin="20" RowDefinitions="Auto,*" ColumnDefinitions="420,*" ColumnSpacing="20" Background="#F5F5F5">
+            <Border Padding="16" CornerRadius="10" Background="#FFFFFF" BorderBrush="#D9D9D9" BorderThickness="1" Grid.ColumnSpan="2">
+                <StackPanel Spacing="8">
+                    <TextBlock Text="Folders" FontSize="24" FontWeight="SemiBold" Foreground="#111111" />
+                    <TextBlock Text="Configured shared folders and their current state" Foreground="#4B4B4B" />
+                </StackPanel>
+            </Border>
+
+            <Border Grid.Row="1" Padding="12" CornerRadius="12" Background="#FFFFFF" BorderBrush="#D9D9D9" BorderThickness="1">
+                <ListBox ItemsSource="{Binding Folders}" SelectedItem="{Binding SelectedFolder}" Background="#FFFFFF" MinHeight="300">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Border Padding="10" CornerRadius="8" Background="#F7F7F7" BorderBrush="#E0E0E0" BorderThickness="1">
+                                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
+                                    <StackPanel Spacing="4">
+                                        <TextBlock Text="{Binding PrettyName}" FontWeight="SemiBold" Foreground="#111111" />
+                                        <TextBlock Text="{Binding Path}" TextTrimming="CharacterEllipsis" Foreground="#3B3B3B" />
+                                        <TextBlock Text="{Binding Type}" Foreground="#3B3B3B" />
+                                    </StackPanel>
+                                    <Button Content="📁" Width="32" Height="32" ToolTip.Tip="Open folder in file manager" Click="OpenFolderListItem_Click" Grid.Column="1" />
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </Border>
+
+            <Border Grid.Row="1" Grid.Column="1" Padding="18" CornerRadius="12" Background="#FFFFFF" BorderBrush="#D9D9D9" BorderThickness="1">
+                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                    <StackPanel Spacing="12">
+                        <TextBlock Text="Selected folder" FontSize="20" FontWeight="SemiBold" Foreground="#111111" />
+                        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                            <TextBlock Text="{Binding SelectedFolder.PrettyName, FallbackValue='No folder selected'}" FontSize="26" FontWeight="SemiBold" Foreground="#111111" />
+                            <Button Content="📁" Width="32" Height="32" ToolTip.Tip="Open folder in file manager" Click="OpenSelectedFolder_Click" Grid.Column="1" />
+                        </Grid>
+
+                        <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto" ColumnDefinitions="150,*" RowSpacing="8" ColumnSpacing="12">
+                            <TextBlock Text="Path" FontWeight="SemiBold" Foreground="#111111" />
+                            <TextBlock Grid.Column="1" Text="{Binding SelectedFolder.Path, FallbackValue=''}" TextWrapping="Wrap" Foreground="#111111" />
+
+                            <TextBlock Grid.Row="1" Text="Type" FontWeight="SemiBold" Foreground="#111111" />
+                            <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding SelectedFolder.Type, FallbackValue=''}" Foreground="#111111" />
+
+                            <TextBlock Grid.Row="2" Text="Read-only" FontWeight="SemiBold" Foreground="#111111" />
+                            <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding SelectedFolder.ReadOnly, FallbackValue='False'}" Foreground="#111111" />
+
+                            <TextBlock Grid.Row="3" Text="Devices" FontWeight="SemiBold" Foreground="#111111" />
+                            <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding SelectedFolder.Devices, FallbackValue=''}" TextWrapping="Wrap" Foreground="#111111" />
+
+                            <TextBlock Grid.Row="4" Text="Status" FontWeight="SemiBold" Foreground="#111111" />
+                            <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding SelectedFolder.StatusSummary, FallbackValue=''}" TextWrapping="Wrap" Foreground="#111111" />
+                        </Grid>
+                    </StackPanel>
+                </ScrollViewer>
+            </Border>
+        </Grid>
+    </ScrollViewer>
+</UserControl>

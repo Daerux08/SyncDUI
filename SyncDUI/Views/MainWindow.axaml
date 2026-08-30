@@ -1,6 +1,7 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="using:SyncDUI.ViewModels"
+        xmlns:views="using:SyncDUI.Views"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="980" d:DesignHeight="720"
@@ -15,257 +16,19 @@
 
     <TabControl Background="#F5F5F5">
         <TabItem Header="Overview">
-            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-                <Grid Margin="20" RowDefinitions="Auto,*" ColumnDefinitions="*" Background="#F5F5F5">
-                    <Border Padding="16" CornerRadius="10" Background="#FFFFFF" BorderBrush="#D9D9D9" BorderThickness="1">
-                        <StackPanel Spacing="12">
-                            <TextBlock Text="SyncDUI" FontSize="24" FontWeight="SemiBold" Foreground="#111111" />
-                            <StackPanel Orientation="Horizontal" Spacing="8">
-                                <TextBlock Text="Status:" FontWeight="SemiBold" Foreground="#111111" />
-                                <TextBlock Text="{Binding ConnectionStatus}" Foreground="#0059B3" />
-                            </StackPanel>
-                        </StackPanel>
-                    </Border>
-
-                    <Grid Grid.Row="1" Margin="0,20,0,0" ColumnDefinitions="1.2*,1.8*" ColumnSpacing="20">
-                        <StackPanel Spacing="16">
-                            <Border Padding="16" CornerRadius="12" Background="#FFFFFF" BorderBrush="#D9D9D9" BorderThickness="1">
-                                <StackPanel Spacing="8">
-                                    <TextBlock Text="System" FontSize="18" FontWeight="SemiBold" Foreground="#111111" />
-                                    <TextBlock Text="{Binding VersionSummary}" Foreground="#111111" />
-                                    <TextBlock Text="{Binding CurrentMachinePrettyName}" Foreground="#111111" />
-                                    <TextBlock Text="{Binding SystemSummary}" TextWrapping="Wrap" Foreground="#111111" />
-                                    <TextBlock Text="{Binding HealthSummary}" Foreground="#111111" />
-                                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
-                                        <TextBlock Text="{Binding PathsSummary}" TextWrapping="Wrap" Foreground="#111111" />
-                                        <Button Content="📁" Width="32" Height="32" ToolTip.Tip="Open config folder" Click="OpenConfigFolder_Click" Grid.Column="1" />
-                                    </Grid>
-                                </StackPanel>
-                            </Border>
-
-                            <Border Padding="16" CornerRadius="12" Background="#FFFFFF" BorderBrush="#D9D9D9" BorderThickness="1">
-                                <StackPanel Spacing="8">
-                                    <TextBlock Text="Connected devices" FontSize="18" FontWeight="SemiBold" Foreground="#111111" />
-                                    <ListBox ItemsSource="{Binding Devices}" SelectedItem="{Binding SelectedDevice}" Height="260" Background="#FFFFFF">
-                                        <ListBox.ItemTemplate>
-                                            <DataTemplate>
-                                                <Border Padding="8" CornerRadius="8" Background="#F7F7F7" BorderBrush="#E0E0E0" BorderThickness="1">
-                                                    <StackPanel Spacing="4">
-                                                        <TextBlock Text="{Binding PrettyName}" FontWeight="SemiBold" Foreground="#111111" />
-                                                        <TextBlock Text="{Binding StatusLabel}" Foreground="#1C7A35" />
-                                                        <TextBlock Text="{Binding Address}" TextTrimming="CharacterEllipsis" Foreground="#111111" />
-                                                        <TextBlock Text="{Binding Throughput}" Foreground="#111111" />
-                                                    </StackPanel>
-                                                </Border>
-                                            </DataTemplate>
-                                        </ListBox.ItemTemplate>
-                                    </ListBox>
-                                </StackPanel>
-                            </Border>
-
-                            <Border Padding="16" CornerRadius="12" Background="#FFFFFF" BorderBrush="#D9D9D9" BorderThickness="1">
-                                <StackPanel Spacing="8">
-                                    <TextBlock Text="Recent events" FontSize="18" FontWeight="SemiBold" Foreground="#111111" />
-                                    <ListBox ItemsSource="{Binding EventLog}" Height="180" Background="#FFFFFF">
-                                        <ListBox.ItemTemplate>
-                                            <DataTemplate>
-                                                <TextBlock Text="{Binding}" TextWrapping="Wrap" Foreground="#111111" />
-                                            </DataTemplate>
-                                        </ListBox.ItemTemplate>
-                                    </ListBox>
-                                </StackPanel>
-                            </Border>
-                        </StackPanel>
-
-                        <StackPanel Grid.Column="1" Spacing="16">
-                            <Border Padding="16" CornerRadius="12" Background="#FFFFFF" BorderBrush="#D9D9D9" BorderThickness="1">
-                                <StackPanel Spacing="12">
-                                    <TextBlock Text="Selected device" FontSize="18" FontWeight="SemiBold" Foreground="#111111" />
-                                    <TextBlock Text="{Binding SelectedDevice.PrettyName, FallbackValue='No device selected'}" FontSize="20" FontWeight="SemiBold" Foreground="#111111" />
-                                    <TextBlock Text="{Binding SelectedDevice.Address, FallbackValue=''}" Foreground="#111111" />
-                                    <TextBlock Text="{Binding SelectedDevice.ClientVersion, FallbackValue=''}" Foreground="#111111" />
-                                    <TextBlock Text="{Binding SelectedDevice.Type, FallbackValue=''}" Foreground="#111111" />
-                                    <TextBlock Text="{Binding SelectedDevice.Throughput, FallbackValue=''}" Foreground="#111111" />
-                                </StackPanel>
-                            </Border>
-
-                            <Border Padding="16" CornerRadius="12" Background="#FFFFFF" BorderBrush="#D9D9D9" BorderThickness="1">
-                                <StackPanel Spacing="8">
-                                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
-                                        <TextBlock Text="Device stats" FontSize="18" FontWeight="SemiBold" Foreground="#111111" />
-                                        <Button Content="📁" Width="32" Height="32" ToolTip.Tip="Open config folder" Click="OpenConfigFolder_Click" Grid.Column="1" />
-                                    </Grid>
-                                    <TextBlock Text="{Binding DeviceStatsSummary}" TextWrapping="Wrap" Foreground="#111111" />
-                                </StackPanel>
-                            </Border>
-
-                            <Border Padding="16" CornerRadius="12" Background="#FFFFFF" BorderBrush="#D9D9D9" BorderThickness="1">
-                                <StackPanel Spacing="8">
-                                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
-                                        <TextBlock Text="Folder stats" FontSize="18" FontWeight="SemiBold" Foreground="#111111" />
-                                        <Button Content="📁" Width="32" Height="32" ToolTip.Tip="Open selected folder" Click="OpenSelectedFolder_Click" Grid.Column="1" />
-                                    </Grid>
-                                    <TextBlock Text="{Binding FolderStatsSummary}" TextWrapping="Wrap" Foreground="#111111" />
-                                </StackPanel>
-                            </Border>
-
-                        </StackPanel>
-                    </Grid>
-                </Grid>
-            </ScrollViewer>
+            <views:OverviewTab DataContext="{Binding}" />
         </TabItem>
 
         <TabItem Header="Devices">
-            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-                <Grid Margin="20" RowDefinitions="Auto,*" ColumnDefinitions="420,*" ColumnSpacing="20" Background="#F5F5F5">
-                    <Border Padding="16" CornerRadius="10" Background="#FFFFFF" BorderBrush="#D9D9D9" BorderThickness="1" Grid.ColumnSpan="2">
-                        <StackPanel Spacing="8">
-                            <TextBlock Text="Devices" FontSize="24" FontWeight="SemiBold" Foreground="#111111" />
-                            <TextBlock Text="Connected peers and their current Syncthing status" Foreground="#4B4B4B" />
-                        </StackPanel>
-                    </Border>
-
-                    <Border Grid.Row="1" Padding="12" CornerRadius="12" Background="#FFFFFF" BorderBrush="#D9D9D9" BorderThickness="1">
-                        <ListBox ItemsSource="{Binding Devices}" SelectedItem="{Binding SelectedDevice}" Background="#FFFFFF" MinHeight="300">
-                            <ListBox.ItemTemplate>
-                                <DataTemplate>
-                                    <Border Padding="10" CornerRadius="8" Background="#F7F7F7" BorderBrush="#E0E0E0" BorderThickness="1">
-                                        <StackPanel Spacing="4">
-                                            <TextBlock Text="{Binding PrettyName}" FontWeight="SemiBold" Foreground="#111111" />
-                                            <TextBlock Text="{Binding StatusLabel}" Foreground="#1C7A35" />
-                                            <TextBlock Text="{Binding Address}" TextTrimming="CharacterEllipsis" Foreground="#3B3B3B" />
-                                            <TextBlock Text="{Binding Throughput}" Foreground="#3B3B3B" />
-                                        </StackPanel>
-                                    </Border>
-                                </DataTemplate>
-                            </ListBox.ItemTemplate>
-                        </ListBox>
-                    </Border>
-
-                    <Border Grid.Row="1" Grid.Column="1" Padding="18" CornerRadius="12" Background="#FFFFFF" BorderBrush="#D9D9D9" BorderThickness="1">
-                        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-                            <StackPanel Spacing="12">
-                                <TextBlock Text="Selected device" FontSize="20" FontWeight="SemiBold" Foreground="#111111" />
-                                <TextBlock Text="{Binding SelectedDevice.PrettyName, FallbackValue='No device selected'}" FontSize="26" FontWeight="SemiBold" Foreground="#111111" />
-
-                                <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto" ColumnDefinitions="150,*" RowSpacing="8" ColumnSpacing="12">
-                                    <TextBlock Text="Address" FontWeight="SemiBold" Foreground="#111111" />
-                                    <TextBlock Grid.Column="1" Text="{Binding SelectedDevice.Address, FallbackValue=''}" Foreground="#111111" />
-
-                                    <TextBlock Grid.Row="1" Text="Status" FontWeight="SemiBold" Foreground="#111111" />
-                                    <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding SelectedDevice.StatusLabel, FallbackValue=''}" Foreground="#111111" />
-
-                                    <TextBlock Grid.Row="2" Text="Client" FontWeight="SemiBold" Foreground="#111111" />
-                                    <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding SelectedDevice.ClientVersion, FallbackValue=''}" Foreground="#111111" />
-
-                                    <TextBlock Grid.Row="3" Text="Type" FontWeight="SemiBold" Foreground="#111111" />
-                                    <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding SelectedDevice.Type, FallbackValue=''}" Foreground="#111111" />
-
-                                    <TextBlock Grid.Row="4" Text="Traffic" FontWeight="SemiBold" Foreground="#111111" />
-                                    <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding SelectedDevice.Throughput, FallbackValue=''}" Foreground="#111111" />
-                                </Grid>
-
-                                <Border Padding="12" CornerRadius="10" Background="#F8F8F8" BorderBrush="#E5E5E5" BorderThickness="1">
-                                    <StackPanel Spacing="6">
-                                        <TextBlock Text="API summary" FontWeight="SemiBold" Foreground="#111111" />
-                                        <TextBlock Text="{Binding DeviceStatsSummary}" TextWrapping="Wrap" Foreground="#111111" />
-                                    </StackPanel>
-                                </Border>
-                            </StackPanel>
-                        </ScrollViewer>
-                    </Border>
-                </Grid>
-            </ScrollViewer>
+            <views:DevicesTab DataContext="{Binding}" />
         </TabItem>
 
         <TabItem Header="Folders">
-            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-                <Grid Margin="20" RowDefinitions="Auto,*" ColumnDefinitions="420,*" ColumnSpacing="20" Background="#F5F5F5">
-                    <Border Padding="16" CornerRadius="10" Background="#FFFFFF" BorderBrush="#D9D9D9" BorderThickness="1" Grid.ColumnSpan="2">
-                        <StackPanel Spacing="8">
-                            <TextBlock Text="Folders" FontSize="24" FontWeight="SemiBold" Foreground="#111111" />
-                            <TextBlock Text="Configured shared folders and their current state" Foreground="#4B4B4B" />
-                        </StackPanel>
-                    </Border>
-
-                    <Border Grid.Row="1" Padding="12" CornerRadius="12" Background="#FFFFFF" BorderBrush="#D9D9D9" BorderThickness="1">
-                        <ListBox ItemsSource="{Binding Folders}" SelectedItem="{Binding SelectedFolder}" Background="#FFFFFF" MinHeight="300">
-                            <ListBox.ItemTemplate>
-                                <DataTemplate>
-                                    <Border Padding="10" CornerRadius="8" Background="#F7F7F7" BorderBrush="#E0E0E0" BorderThickness="1">
-                                        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
-                                            <StackPanel Spacing="4">
-                                                <TextBlock Text="{Binding PrettyName}" FontWeight="SemiBold" Foreground="#111111" />
-                                                <TextBlock Text="{Binding Path}" TextTrimming="CharacterEllipsis" Foreground="#3B3B3B" />
-                                                <TextBlock Text="{Binding Type}" Foreground="#3B3B3B" />
-                                            </StackPanel>
-                                            <Button Content="📁" Width="32" Height="32" ToolTip.Tip="Open folder in file manager" Click="OpenFolderListItem_Click" Grid.Column="1" />
-                                        </Grid>
-                                    </Border>
-                                </DataTemplate>
-                            </ListBox.ItemTemplate>
-                        </ListBox>
-                    </Border>
-
-                    <Border Grid.Row="1" Grid.Column="1" Padding="18" CornerRadius="12" Background="#FFFFFF" BorderBrush="#D9D9D9" BorderThickness="1">
-                        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-                            <StackPanel Spacing="12">
-                                <TextBlock Text="Selected folder" FontSize="20" FontWeight="SemiBold" Foreground="#111111" />
-                                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
-                                    <TextBlock Text="{Binding SelectedFolder.PrettyName, FallbackValue='No folder selected'}" FontSize="26" FontWeight="SemiBold" Foreground="#111111" />
-                                    <Button Content="📁" Width="32" Height="32" ToolTip.Tip="Open folder in file manager" Click="OpenSelectedFolder_Click" Grid.Column="1" />
-                                </Grid>
-
-                                <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto" ColumnDefinitions="150,*" RowSpacing="8" ColumnSpacing="12">
-                                    <TextBlock Text="Path" FontWeight="SemiBold" Foreground="#111111" />
-                                    <TextBlock Grid.Column="1" Text="{Binding SelectedFolder.Path, FallbackValue=''}" TextWrapping="Wrap" Foreground="#111111" />
-
-                                    <TextBlock Grid.Row="1" Text="Type" FontWeight="SemiBold" Foreground="#111111" />
-                                    <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding SelectedFolder.Type, FallbackValue=''}" Foreground="#111111" />
-
-                                    <TextBlock Grid.Row="2" Text="Read-only" FontWeight="SemiBold" Foreground="#111111" />
-                                    <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding SelectedFolder.ReadOnly, FallbackValue='False'}" Foreground="#111111" />
-
-                                    <TextBlock Grid.Row="3" Text="Devices" FontWeight="SemiBold" Foreground="#111111" />
-                                    <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding SelectedFolder.Devices, FallbackValue=''}" TextWrapping="Wrap" Foreground="#111111" />
-
-                                    <TextBlock Grid.Row="4" Text="Status" FontWeight="SemiBold" Foreground="#111111" />
-                                    <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding SelectedFolder.StatusSummary, FallbackValue=''}" TextWrapping="Wrap" Foreground="#111111" />
-                                </Grid>
-                            </StackPanel>
-                        </ScrollViewer>
-                    </Border>
-                </Grid>
-            </ScrollViewer>
+            <views:FoldersTab DataContext="{Binding}" />
         </TabItem>
 
         <TabItem Header="Settings">
-            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-                <StackPanel Margin="20" Spacing="18">
-                    <Border Padding="20" CornerRadius="12" Background="#FFFFFF" BorderBrush="#D9D9D9" BorderThickness="1">
-                        <StackPanel Spacing="12">
-                            <TextBlock Text="Settings" FontSize="24" FontWeight="SemiBold" Foreground="#111111" />
-                            <TextBlock Text="Syncthing API connection and local configuration" Foreground="#4B4B4B" />
-
-                            <Grid ColumnDefinitions="2*,2*,Auto" ColumnSpacing="12">
-                                <TextBox PlaceholderText="Syncthing base URL" Text="{Binding BaseUrl}" Foreground="#111111" Background="#FFFFFF" />
-                                <TextBox PlaceholderText="API key" Text="{Binding ApiKey}" Grid.Column="1" Foreground="#111111" Background="#FFFFFF" />
-                                <Button Content="Refresh" Command="{Binding RefreshCommand}" Grid.Column="2" Width="110" />
-                            </Grid>
-                        </StackPanel>
-                    </Border>
-
-                    <Border Padding="20" CornerRadius="12" Background="#FFFFFF" BorderBrush="#D9D9D9" BorderThickness="1">
-                        <StackPanel Spacing="14">
-                            <TextBlock Text="Syncthing configuration summary" FontSize="20" FontWeight="SemiBold" Foreground="#111111" />
-                            <Border Padding="12" CornerRadius="10" Background="#F8F8F8" BorderBrush="#E5E5E5" BorderThickness="1">
-                                <TextBlock Text="{Binding SettingsSummary}" TextWrapping="Wrap" Foreground="#111111" />
-                            </Border>
-                        </StackPanel>
-                    </Border>
-
-                </StackPanel>
-            </ScrollViewer>
+            <views:SettingsTab DataContext="{Binding}" />
         </TabItem>
     </TabControl>
 </Window>

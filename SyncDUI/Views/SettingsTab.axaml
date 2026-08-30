@@ -1,0 +1,31 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:SyncDUI.ViewModels"
+             x:Class="SyncDUI.Views.SettingsTab"
+             x:DataType="vm:MainViewModel">
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+        <StackPanel Margin="20" Spacing="18">
+            <Border Padding="20" CornerRadius="12" Background="#FFFFFF" BorderBrush="#D9D9D9" BorderThickness="1">
+                <StackPanel Spacing="12">
+                    <TextBlock Text="Settings" FontSize="24" FontWeight="SemiBold" Foreground="#111111" />
+                    <TextBlock Text="Syncthing API connection and local configuration" Foreground="#4B4B4B" />
+
+                    <Grid ColumnDefinitions="2*,2*,Auto" ColumnSpacing="12">
+                        <TextBox PlaceholderText="Syncthing base URL" Text="{Binding BaseUrl}" Foreground="#111111" Background="#FFFFFF" />
+                        <TextBox PlaceholderText="API key" Text="{Binding ApiKey}" Grid.Column="1" Foreground="#111111" Background="#FFFFFF" />
+                        <Button Content="Refresh" Command="{Binding RefreshCommand}" Grid.Column="2" Width="110" />
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+            <Border Padding="20" CornerRadius="12" Background="#FFFFFF" BorderBrush="#D9D9D9" BorderThickness="1">
+                <StackPanel Spacing="14">
+                    <TextBlock Text="Syncthing configuration summary" FontSize="20" FontWeight="SemiBold" Foreground="#111111" />
+                    <Border Padding="12" CornerRadius="10" Background="#F8F8F8" BorderBrush="#E5E5E5" BorderThickness="1">
+                        <TextBlock Text="{Binding SettingsSummary}" TextWrapping="Wrap" Foreground="#111111" />
+                    </Border>
+                </StackPanel>
+            </Border>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

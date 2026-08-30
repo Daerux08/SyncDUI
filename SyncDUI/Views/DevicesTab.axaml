@@ -1,0 +1,89 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:SyncDUI.ViewModels"
+             x:Class="SyncDUI.Views.DevicesTab"
+             x:DataType="vm:MainViewModel">
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+        <Grid Margin="20" RowDefinitions="Auto,*" ColumnDefinitions="420,*" ColumnSpacing="20" Background="#F5F5F5">
+            <Border Padding="16" CornerRadius="10" Background="#FFFFFF" BorderBrush="#D9D9D9" BorderThickness="1" Grid.ColumnSpan="2">
+                <StackPanel Spacing="8">
+                    <TextBlock Text="Devices" FontSize="24" FontWeight="SemiBold" Foreground="#111111" />
+                    <TextBlock Text="Connected peers and their current Syncthing status" Foreground="#4B4B4B" />
+                </StackPanel>
+            </Border>
+
+            <Border Grid.Row="1" Padding="12" CornerRadius="12" Background="#FFFFFF" BorderBrush="#D9D9D9" BorderThickness="1">
+                <ListBox ItemsSource="{Binding Devices}" SelectedItem="{Binding SelectedDevice}" Background="#FFFFFF" MinHeight="300">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Border Padding="10" CornerRadius="8" Background="#F7F7F7" BorderBrush="#E0E0E0" BorderThickness="1">
+                                <StackPanel Spacing="4">
+                                    <TextBlock Text="{Binding PrettyName}" FontWeight="SemiBold" Foreground="#111111" />
+                                    <TextBlock Text="{Binding StatusLabel}" Foreground="#1C7A35" />
+                                    <TextBlock Text="{Binding Address}" TextTrimming="CharacterEllipsis" Foreground="#3B3B3B" />
+                                    <TextBlock Text="{Binding Throughput}" Foreground="#3B3B3B" />
+                                </StackPanel>
+                            </Border>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </Border>
+
+            <Border Grid.Row="1" Grid.Column="1" Padding="18" CornerRadius="12" Background="#FFFFFF" BorderBrush="#D9D9D9" BorderThickness="1">
+                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                    <StackPanel Spacing="14">
+                        <Border Padding="12" CornerRadius="10" Background="#F5F7FF" BorderBrush="#D5DDFD" BorderThickness="1">
+                            <StackPanel Spacing="10">
+                                <TextBlock Text="Your device" FontSize="18" FontWeight="SemiBold" Foreground="#111111" />
+                                <TextBlock Text="{Binding LocalDevice.PrettyName, FallbackValue='Local device unavailable'}" FontSize="22" FontWeight="SemiBold" Foreground="#111111" />
+                                <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto" ColumnDefinitions="120,*" RowSpacing="8" ColumnSpacing="12">
+                                    <TextBlock Text="Address" FontWeight="SemiBold" Foreground="#111111" />
+                                    <TextBlock Grid.Column="1" Text="{Binding LocalDevice.Address, FallbackValue=''}" Foreground="#111111" />
+
+                                    <TextBlock Grid.Row="1" Text="Status" FontWeight="SemiBold" Foreground="#111111" />
+                                    <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding LocalDevice.StatusLabel, FallbackValue=''}" Foreground="#111111" />
+
+                                    <TextBlock Grid.Row="2" Text="Client" FontWeight="SemiBold" Foreground="#111111" />
+                                    <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding LocalDevice.ClientVersion, FallbackValue=''}" Foreground="#111111" />
+
+                                    <TextBlock Grid.Row="3" Text="Type" FontWeight="SemiBold" Foreground="#111111" />
+                                    <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding LocalDevice.Type, FallbackValue=''}" Foreground="#111111" />
+
+                                    <TextBlock Grid.Row="4" Text="Traffic" FontWeight="SemiBold" Foreground="#111111" />
+                                    <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding LocalDevice.Throughput, FallbackValue=''}" Foreground="#111111" />
+                                </Grid>
+
+                                <Border Padding="10" CornerRadius="8" Background="#FFFFFF" BorderBrush="#D5DDFD" BorderThickness="1">
+                                    <StackPanel Spacing="6">
+                                        <TextBlock Text="Device stats" FontWeight="SemiBold" Foreground="#111111" />
+                                        <TextBlock Text="{Binding DeviceStatsSummary}" TextWrapping="Wrap" Foreground="#111111" />
+                                    </StackPanel>
+                                </Border>
+                            </StackPanel>
+                        </Border>
+
+                        <TextBlock Text="Selected device" FontSize="20" FontWeight="SemiBold" Foreground="#111111" />
+                        <TextBlock Text="{Binding SelectedDevice.PrettyName, FallbackValue='No device selected'}" FontSize="26" FontWeight="SemiBold" Foreground="#111111" />
+
+                        <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto" ColumnDefinitions="150,*" RowSpacing="8" ColumnSpacing="12">
+                            <TextBlock Text="Address" FontWeight="SemiBold" Foreground="#111111" />
+                            <TextBlock Grid.Column="1" Text="{Binding SelectedDevice.Address, FallbackValue=''}" Foreground="#111111" />
+
+                            <TextBlock Grid.Row="1" Text="Status" FontWeight="SemiBold" Foreground="#111111" />
+                            <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding SelectedDevice.StatusLabel, FallbackValue=''}" Foreground="#111111" />
+
+                            <TextBlock Grid.Row="2" Text="Client" FontWeight="SemiBold" Foreground="#111111" />
+                            <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding SelectedDevice.ClientVersion, FallbackValue=''}" Foreground="#111111" />
+
+                            <TextBlock Grid.Row="3" Text="Type" FontWeight="SemiBold" Foreground="#111111" />
+                            <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding SelectedDevice.Type, FallbackValue=''}" Foreground="#111111" />
+
+                            <TextBlock Grid.Row="4" Text="Traffic" FontWeight="SemiBold" Foreground="#111111" />
+                            <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding SelectedDevice.Throughput, FallbackValue=''}" Foreground="#111111" />
+                        </Grid>
+                    </StackPanel>
+                </ScrollViewer>
+            </Border>
+        </Grid>
+    </ScrollViewer>
+</UserControl>
